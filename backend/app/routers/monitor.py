@@ -39,6 +39,21 @@ def list_entries(
     return PageResult(items=items, total=total, page=page, size=size)
 
 
+@router.get("/date-change-events")
+def date_change_events(
+    notify_status: str | None = Query(default=None, description="默认只看待通知，可传 已通知前台/前台已确认"),
+) -> dict[str, Any]:
+    """采集监控消费正文变动判定：汇总涉及开放日期变更的变化事件，供监控员决定通知前台。
+
+    每条事件都带旧/新节选与两次采集时间，可直接查回两次实际抓取的文字。
+    """
+    from app.services.content_diff import service as content_diff_service
+
+    status = notify_status or "待通知"
+    items, total = content_diff_service.list_events(date_changed=True, notify_status=status, page=1, size=200)
+    return {"module": "monitor", "notify_status": status, "total": total, "items": items}
+
+
 @router.get("/{entry_id}", response_model=dict)
 def get_entry(entry_id: int) -> dict:
     """读取单条监控面板明细；不存在时给出可读的错误说明。"""

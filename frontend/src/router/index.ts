@@ -18,6 +18,7 @@ const Transform = () => import('@/views/transform/index.vue')
 const Flow = () => import('@/views/flow/index.vue')
 const Lineage = () => import('@/views/lineage/index.vue')
 const Report = () => import('@/views/report/index.vue')
+const ContentDiff = () => import('@/views/content_diff/index.vue')
 
 const router = createRouter({
   history: createWebHistory(),
@@ -34,6 +35,7 @@ const router = createRouter({
     { path: '/dedup', name: 'dedup', component: Dedup },
     { path: '/schedule', name: 'schedule', component: Schedule },
     { path: '/monitor', name: 'monitor', component: Monitor },
+    { path: '/content_diff', name: 'content_diff', component: ContentDiff },
     { path: '/log_viewer', name: 'log_viewer', component: LogViewer },
     { path: '/auth', name: 'auth', component: Auth },
     { path: '/transform', name: 'transform', component: Transform },

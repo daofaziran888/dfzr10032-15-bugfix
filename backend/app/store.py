@@ -14,6 +14,16 @@ class Store:
         self._tables: dict[str, list[dict[str, Any]]] = {
             name: [dict(row) for row in rows] for name, rows in SEED_ROWS.items()
         }
+        # 正文变动判定的三张表：采集快照、判定记录、变化事件。
+        for table in ("content_snapshot", "content_diff", "content_change_event"):
+            self._tables.setdefault(table, [])
+
+    def bootstrap(self) -> None:
+        """实例就绪后装配场景数据：此时 app.store 模块已完整可导入，
+        服务方法里的懒加载 import 不会再撞循环导入。"""
+        from app.services.content_diff import service as content_diff_service
+
+        content_diff_service.bootstrap(self)
 
     def module_names(self) -> list[str]:
         return sorted(self._tables)
@@ -47,3 +57,5 @@ class Store:
 
 
 store = Store()
+# 快照/判定/事件由服务层依据种子原始响应现算，保证与引擎口径一致。
+store.bootstrap()
